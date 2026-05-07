@@ -21,8 +21,8 @@ export async function mount(container, { params }) {
       <div class="app-bar">
         <button class="app-bar-btn back-btn" id="btn-back">‹</button>
         <div class="app-bar-title build-name-display" id="build-name-display">${esc(build.name)}</div>
-        <button class="app-bar-btn" id="btn-cover" title="Set cover image">📷</button>
-        <button class="app-bar-btn" id="btn-rename" title="Rename build">✏️</button>
+        <button class="app-bar-btn" id="btn-cover" title="Set cover image"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
+        <button class="app-bar-btn" id="btn-rename" title="Rename build"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
       </div>
       <input type="file" id="cover-input" accept="image/*" style="display:none">
       <div class="build-progress-bar-wrap">

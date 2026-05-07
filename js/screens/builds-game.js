@@ -16,8 +16,8 @@ export async function mount(container, { params }) {
         <div class="banner-header-actions">
           <button class="app-bar-btn back-btn" id="btn-back" style="color:#fff">‹</button>
           <div style="flex:1"></div>
-          <button class="app-bar-btn" id="btn-template" style="color:#fff" title="Edit Template">🔧</button>
-          <button class="app-bar-btn" id="btn-edit" style="color:#fff" title="Edit Game">⚙️</button>
+          <button class="app-bar-btn" id="btn-template" style="color:#fff" title="Edit Template"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></button>
+          <button class="app-bar-btn" id="btn-edit" style="color:#fff" title="Edit Game"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></button>
         </div>
         <div class="banner-header-title">${esc(game.name)}</div>
       </div>

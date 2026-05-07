@@ -912,7 +912,7 @@ img { display: block; max-width: 100%; }
 .section-card-body {
   position: relative;
   z-index: 1;
-  padding: 24px 20px 24px 0;
+  padding: 24px 20px;
 }
 .section-card-title {
   font-size: 18px;
