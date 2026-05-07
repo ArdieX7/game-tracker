@@ -48,13 +48,12 @@ export async function mount(container, { params }) {
       return;
     }
 
-    // Compute progress for each build
     const sections = await db.getByIndex('build_sections', 'gameId', gameId);
     const totalFixed = sections.reduce((sum, s) => sum + (s.fields?.length || 0), 0);
 
     list.innerHTML = '';
-    const container = document.createElement('div');
-    container.className = 'builds-list';
+    const listContainer = document.createElement('div');
+    listContainer.className = 'builds-list';
 
     for (const build of builds) {
       const values = await db.getByIndex('build_values', 'buildId', build.id);
@@ -64,7 +63,14 @@ export async function mount(container, { params }) {
       const card = document.createElement('div');
       card.className = 'build-card';
       card.dataset.id = build.id;
+
+      const bgHtml = build.bannerImage
+        ? `<img class="build-card-bg" src="${build.bannerImage}" alt="">
+           <div class="build-card-overlay"></div>`
+        : '';
+
       card.innerHTML = `
+        ${bgHtml}
         <div class="build-card-info">
           <div class="build-card-name">${esc(build.name)}</div>
           <div class="build-card-progress-wrap">
@@ -79,6 +85,7 @@ export async function mount(container, { params }) {
       card.addEventListener('pointerdown', () => {
         pressTimer = setTimeout(async () => {
           if (!confirm(`Delete build "${build.name}"?`)) return;
+          await db.deleteByIndex('build_photos', 'buildId', build.id);
           await db.deleteByIndex('build_values', 'buildId', build.id);
           await db.delete('builds', build.id);
           showToast('Build deleted', 'success');
@@ -88,10 +95,10 @@ export async function mount(container, { params }) {
       card.addEventListener('pointerup', () => clearTimeout(pressTimer));
       card.addEventListener('pointercancel', () => clearTimeout(pressTimer));
 
-      container.appendChild(card);
+      listContainer.appendChild(card);
     }
 
-    list.appendChild(container);
+    list.appendChild(listContainer);
   }
 
   async function addBuild() {

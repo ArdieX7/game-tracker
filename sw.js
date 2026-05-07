@@ -1,4 +1,4 @@
-const CACHE = 'game-tracker-v4';
+const CACHE = 'game-tracker-v5';
 const ASSETS = [
   './index.html',
   './manifest.json',

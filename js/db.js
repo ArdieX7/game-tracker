@@ -1,5 +1,5 @@
 const DB_NAME = 'GameTrackerDB';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 let _db = null;
 
 function openDB() {
@@ -26,6 +26,7 @@ function openDB() {
       }
       // v2 stores — Game Builds feature
       if (e.oldVersion < 2) {
+        // (guard also covers fresh installs that jump straight to v2)
         const bg = db.createObjectStore('build_games', { keyPath: 'id' });
         bg.createIndex('order', 'order');
 
@@ -38,6 +39,11 @@ function openDB() {
         const bv = db.createObjectStore('build_values', { keyPath: 'id' });
         bv.createIndex('buildId', 'buildId');
         bv.createIndex('buildId_sectionId', ['buildId', 'sectionId']);
+      }
+      // v3 stores — Build photos
+      if (e.oldVersion < 3) {
+        const bp = db.createObjectStore('build_photos', { keyPath: 'id' });
+        bp.createIndex('buildId', 'buildId');
       }
     };
     req.onsuccess = (e) => { _db = e.target.result; resolve(_db); };

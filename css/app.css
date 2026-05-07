@@ -879,38 +879,58 @@ img { display: block; max-width: 100%; }
 }
 .section-card {
   background: var(--surface);
+  background-size: cover;
+  background-position: center;
   border: 1px solid var(--surface-2);
   border-radius: var(--radius-xl);
-  padding: 24px 20px;
+  min-height: 110px;
   display: flex;
   align-items: center;
   gap: 20px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  transition: transform 0.1s, opacity 0.15s;
+  overflow: hidden;
+  position: relative;
+  padding: 0;
 }
-.section-card:active { transform: scale(0.98); background: var(--surface-2); }
+.section-card:active { transform: scale(0.98); opacity: 0.9; }
+.section-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  border-radius: inherit;
+}
 .section-card-icon {
   font-size: 40px;
   flex-shrink: 0;
   line-height: 1;
+  position: relative;
+  z-index: 1;
+  padding-left: 20px;
+}
+.section-card-body {
+  position: relative;
+  z-index: 1;
+  padding: 24px 20px 24px 0;
 }
 .section-card-title {
   font-size: 18px;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 4px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 }
 .section-card-subtitle {
   font-size: 13px;
-  color: var(--text-muted);
+  color: rgba(255,255,255,0.75);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
 /* ── Builds list (builds-game screen) ────────────────────── */
 .builds-list {
   display: flex;
   flex-direction: column;
-  gap: 1px;
   padding: 16px;
   gap: 12px;
 }
@@ -918,21 +938,42 @@ img { display: block; max-width: 100%; }
   background: var(--surface);
   border: 1px solid var(--surface-2);
   border-radius: var(--radius-md);
-  padding: 14px 16px;
+  min-height: 88px;
   display: flex;
   align-items: center;
   gap: 12px;
+  padding: 14px 16px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.1s, transform 0.1s;
+  transition: transform 0.1s, opacity 0.15s;
+  overflow: hidden;
+  position: relative;
 }
-.build-card:active { transform: scale(0.98); background: var(--surface-2); }
+.build-card:active { transform: scale(0.98); opacity: 0.85; }
+.build-card-bg {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 55%;
+  object-fit: cover;
+}
+.build-card-overlay {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 65%;
+  background: linear-gradient(to right, var(--surface) 0%, transparent 70%);
+}
 .build-card-info {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
+  z-index: 1;
 }
 .build-card-name {
   font-size: 16px;
@@ -941,6 +982,7 @@ img { display: block; max-width: 100%; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
 .build-card-progress-wrap {
   height: 4px;
@@ -962,6 +1004,8 @@ img { display: block; max-width: 100%; }
   font-variant-numeric: tabular-nums;
   min-width: 40px;
   text-align: right;
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Build detail progress bar ───────────────────────────── */
@@ -1189,3 +1233,102 @@ img { display: block; max-width: 100%; }
   -webkit-tap-highlight-color: transparent;
 }
 .btn-add-section:active { border-color: var(--accent); color: var(--accent); }
+
+/* ── Build photo strip ───────────────────────────────────── */
+.build-photo-strip-wrap {
+  background: var(--bg);
+  border-bottom: 1px solid var(--surface-2);
+  padding: 8px 12px;
+}
+.build-photo-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.build-photo-strip::-webkit-scrollbar { display: none; }
+.build-photo-add {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  border: 1.5px dashed var(--surface-2);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.build-photo-add:active { border-color: var(--accent); color: var(--accent); }
+.build-photo-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+}
+.build-photo-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.build-photo-del {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+.build-photo-del:active { background: var(--danger); }
+
+/* ── Lightbox ────────────────────────────────────────────── */
+.build-photo-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+}
+.build-photo-lightbox.active { display: flex; }
+.build-photo-lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+.build-photo-lightbox-close {
+  position: absolute;
+  top: calc(var(--safe-top) + 12px);
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9001;
+  -webkit-tap-highlight-color: transparent;
+}
+.build-photo-lightbox-close:active { background: rgba(255,255,255,0.3); }

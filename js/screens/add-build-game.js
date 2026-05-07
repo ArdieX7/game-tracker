@@ -84,9 +84,10 @@ export async function mount(container, { screen, params }) {
   if (isEdit) {
     document.getElementById('btn-delete').addEventListener('click', async () => {
       if (!confirm(`Delete "${game.name}" and all its builds?`)) return;
-      // Cascade: build_values → builds → build_sections → build_game
+      // Cascade: build_photos + build_values → builds → build_sections → build_game
       const builds = await db.getByIndex('builds', 'gameId', gameId);
       for (const b of builds) {
+        await db.deleteByIndex('build_photos', 'buildId', b.id);
         await db.deleteByIndex('build_values', 'buildId', b.id);
       }
       await db.deleteByIndex('builds', 'gameId', gameId);

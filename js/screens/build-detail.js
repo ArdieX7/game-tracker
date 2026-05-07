@@ -1,5 +1,6 @@
 import { db } from '../db.js';
 import { navigate, showToast } from '../app.js';
+import { resizeImage } from '../image.js';
 
 export async function mount(container, { params }) {
   const buildId = params[0];
@@ -10,11 +11,9 @@ export async function mount(container, { params }) {
   const sections = (await db.getByIndex('build_sections', 'gameId', build.gameId))
     .sort((a, b) => a.order - b.order);
 
-  // Build a map of all values for this build keyed by fieldId
   const allValues = await db.getByIndex('build_values', 'buildId', buildId);
   const valuesMap = new Map(allValues.map(v => [v.fieldId, v]));
 
-  // Compute total fixed fields for progress
   const totalFixed = sections.reduce((sum, s) => sum + (s.fields?.length || 0), 0);
 
   container.innerHTML = `
@@ -22,21 +21,122 @@ export async function mount(container, { params }) {
       <div class="app-bar">
         <button class="app-bar-btn back-btn" id="btn-back">‹</button>
         <div class="app-bar-title build-name-display" id="build-name-display">${esc(build.name)}</div>
+        <button class="app-bar-btn" id="btn-cover" title="Set cover image">📷</button>
         <button class="app-bar-btn" id="btn-rename" title="Rename build">✏️</button>
       </div>
+      <input type="file" id="cover-input" accept="image/*" style="display:none">
       <div class="build-progress-bar-wrap">
         <div class="build-progress-track">
           <div class="build-progress-fill" id="progress-fill" style="width:${calcPct()}%"></div>
         </div>
         <div class="build-progress-label" id="progress-label">${calcLabel()}</div>
       </div>
+      <div class="build-photo-strip-wrap" id="photo-strip-wrap"></div>
       <div class="scroll-area" id="build-content"></div>
     </div>`;
+
+  // ── Cover image ───────────────────────────────────────────
+
+  const coverInput = document.getElementById('cover-input');
+  document.getElementById('btn-cover').addEventListener('click', () => coverInput.click());
+  coverInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      build.bannerImage = await resizeImage(file);
+      await db.put('builds', build);
+      showToast('Cover updated', 'success');
+    } catch {
+      showToast('Could not load image', 'error');
+    }
+    coverInput.value = '';
+  });
+
+  // ── Back / rename ─────────────────────────────────────────
 
   document.getElementById('btn-back').addEventListener('click', () => navigate(`builds-game/${build.gameId}`));
   document.getElementById('btn-rename').addEventListener('click', startRename);
 
-  // Render sections
+  // ── Photo gallery ─────────────────────────────────────────
+
+  const photos = (await db.getByIndex('build_photos', 'buildId', buildId))
+    .sort((a, b) => a.createdAt - b.createdAt);
+
+  const stripWrap = document.getElementById('photo-strip-wrap');
+  stripWrap.innerHTML = `
+    <div class="build-photo-strip" id="photo-strip">
+      <label class="build-photo-add" title="Add photo">
+        ＋
+        <input type="file" accept="image/*" multiple style="display:none" id="photo-input">
+      </label>
+    </div>`;
+
+  const strip = document.getElementById('photo-strip');
+  const photoInput = document.getElementById('photo-input');
+
+  for (const photo of photos) {
+    strip.appendChild(makeThumb(photo));
+  }
+
+  photoInput.addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files);
+    for (const file of files) {
+      try {
+        const image = await resizeImage(file, 1200, 0.82);
+        const photo = { id: crypto.randomUUID(), buildId, image, createdAt: Date.now() };
+        await db.put('build_photos', photo);
+        strip.appendChild(makeThumb(photo));
+      } catch {
+        showToast('Could not load photo', 'error');
+      }
+    }
+    photoInput.value = '';
+  });
+
+  function makeThumb(photo) {
+    const wrap = document.createElement('div');
+    wrap.className = 'build-photo-thumb';
+    wrap.dataset.id = photo.id;
+    const img = document.createElement('img');
+    img.src = photo.image;
+    img.addEventListener('click', () => openLightbox(photo.image));
+    const del = document.createElement('button');
+    del.className = 'build-photo-del';
+    del.textContent = '×';
+    del.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (!confirm('Remove this photo?')) return;
+      await db.delete('build_photos', photo.id);
+      wrap.remove();
+    });
+    wrap.appendChild(img);
+    wrap.appendChild(del);
+    return wrap;
+  }
+
+  // ── Lightbox ──────────────────────────────────────────────
+
+  if (!document.getElementById('photo-lightbox')) {
+    const lb = document.createElement('div');
+    lb.id = 'photo-lightbox';
+    lb.className = 'build-photo-lightbox';
+    lb.innerHTML = `<button class="build-photo-lightbox-close">×</button><img id="lightbox-img" src="">`;
+    lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+    lb.querySelector('.build-photo-lightbox-close').addEventListener('click', closeLightbox);
+    document.body.appendChild(lb);
+  }
+
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('photo-lightbox').classList.add('active');
+  }
+  function closeLightbox() {
+    document.getElementById('photo-lightbox').classList.remove('active');
+    document.getElementById('lightbox-img').src = '';
+  }
+
+  // ── Sections ──────────────────────────────────────────────
+
   if (!sections.length) {
     document.getElementById('build-content').innerHTML = `
       <div class="empty-state">
@@ -53,7 +153,6 @@ export async function mount(container, { params }) {
   for (const section of sections) {
     content.appendChild(buildSectionEl(section));
   }
-  // Bottom spacer for FAB clearance
   const spacer = document.createElement('div');
   spacer.style.height = '32px';
   content.appendChild(spacer);
@@ -93,12 +192,10 @@ export async function mount(container, { params }) {
     header.textContent = section.name;
     wrap.appendChild(header);
 
-    // Fixed fields
     for (const field of (section.fields || [])) {
       wrap.appendChild(buildFixedRow(section, field));
     }
 
-    // Dynamic fields for this section
     const dynamics = allValues
       .filter(v => v.sectionId === section.id && v.isDynamic)
       .sort((a, b) => a.order - b.order);
@@ -106,7 +203,6 @@ export async function mount(container, { params }) {
       wrap.appendChild(buildDynamicRow(section, dv));
     }
 
-    // Add item button
     const addBtn = document.createElement('button');
     addBtn.className = 'btn-add-dynamic-field';
     addBtn.textContent = '＋ Add item';
