@@ -7,7 +7,7 @@ const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export async function mount(container, { params }) {
   const gameId = params[0];
   const game = await db.get('games', gameId);
-  if (!game) { navigate('home'); return; }
+  if (!game) { navigate('tracker'); return; }
 
   container.innerHTML = `
     <div class="screen">

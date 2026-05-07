@@ -7,7 +7,7 @@ const DOTS_THRESHOLD = 8; // maxCount <= this → dots; > this → progress bar
 export async function mount(container, { params }) {
   const gameId = params[0];
   const game = await db.get('games', gameId);
-  if (!game) { navigate('home'); return; }
+  if (!game) { navigate('tracker'); return; }
 
   let activeTab = 'daily';
 
@@ -36,7 +36,7 @@ export async function mount(container, { params }) {
     </div>
     <button class="fab" id="fab-add">＋</button>`;
 
-  document.getElementById('btn-back').addEventListener('click', () => navigate('home'));
+  document.getElementById('btn-back').addEventListener('click', () => navigate('tracker'));
   document.getElementById('btn-edit').addEventListener('click', () => navigate(`edit-game/${gameId}`));
   document.getElementById('btn-history').addEventListener('click', () => navigate(`history/${gameId}`));
   document.getElementById('fab-add').addEventListener('click', () => navigate(`add-task/${gameId}/${activeTab}`));

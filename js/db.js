@@ -1,5 +1,5 @@
 const DB_NAME = 'GameTrackerDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 let _db = null;
 
 function openDB() {
@@ -8,6 +8,7 @@ function openDB() {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = (e) => {
       const db = e.target.result;
+      // v1 stores — guarded so existing users don't lose data
       if (!db.objectStoreNames.contains('games')) {
         const games = db.createObjectStore('games', { keyPath: 'id' });
         games.createIndex('order', 'order');
@@ -22,6 +23,21 @@ function openDB() {
         completions.createIndex('gameId', 'gameId');
         completions.createIndex('taskId', 'taskId');
         completions.createIndex('taskId_periodKey', ['taskId', 'periodKey']);
+      }
+      // v2 stores — Game Builds feature
+      if (e.oldVersion < 2) {
+        const bg = db.createObjectStore('build_games', { keyPath: 'id' });
+        bg.createIndex('order', 'order');
+
+        const bs = db.createObjectStore('build_sections', { keyPath: 'id' });
+        bs.createIndex('gameId', 'gameId');
+
+        const builds = db.createObjectStore('builds', { keyPath: 'id' });
+        builds.createIndex('gameId', 'gameId');
+
+        const bv = db.createObjectStore('build_values', { keyPath: 'id' });
+        bv.createIndex('buildId', 'buildId');
+        bv.createIndex('buildId_sectionId', ['buildId', 'sectionId']);
       }
     };
     req.onsuccess = (e) => { _db = e.target.result; resolve(_db); };

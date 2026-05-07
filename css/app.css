@@ -869,3 +869,323 @@ img { display: block; max-width: 100%; }
   animation: screenIn 0.2s ease;
 }
 @keyframes screenIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ── Home Hub (section cards) ────────────────────────────── */
+.section-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 16px;
+}
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
+  border-radius: var(--radius-xl);
+  padding: 24px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+}
+.section-card:active { transform: scale(0.98); background: var(--surface-2); }
+.section-card-icon {
+  font-size: 40px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.section-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.section-card-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ── Builds list (builds-game screen) ────────────────────── */
+.builds-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 16px;
+  gap: 12px;
+}
+.build-card {
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.1s, transform 0.1s;
+}
+.build-card:active { transform: scale(0.98); background: var(--surface-2); }
+.build-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.build-card-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.build-card-progress-wrap {
+  height: 4px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.build-card-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+.build-card-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* ── Build detail progress bar ───────────────────────────── */
+.build-progress-bar-wrap {
+  padding: 12px 16px 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--surface-2);
+  background: var(--bg);
+}
+.build-progress-track {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.build-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+.build-progress-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Build detail section header ─────────────────────────── */
+.build-section-header {
+  padding: 12px 16px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--accent);
+  border-left: 3px solid var(--accent);
+  margin: 12px 16px 0;
+  background: var(--accent-dim);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* ── Build field rows ─────────────────────────────────────── */
+.build-field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--surface-2);
+}
+.build-field-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  flex: 0 0 auto;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.build-field-label-input {
+  flex: 0 0 auto;
+  width: 40%;
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  font-size: 13px;
+  color: var(--text);
+  -webkit-appearance: none;
+}
+.build-field-label-input:focus { border-color: var(--accent); outline: none; }
+.build-field-value {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  font-size: 14px;
+  color: var(--text);
+  -webkit-appearance: none;
+}
+.build-field-value:focus { border-color: var(--accent); outline: none; }
+.build-field-check {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.build-field-delete {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  transition: background 0.1s, color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.build-field-delete:active { background: var(--danger-dim); color: var(--danger); }
+
+/* ── Add dynamic field button ────────────────────────────── */
+.btn-add-dynamic-field {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 8px 16px;
+  padding: 10px;
+  border: 1.5px dashed var(--surface-2);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-add-dynamic-field:active { border-color: var(--accent); color: var(--accent); }
+
+/* ── Template editor ─────────────────────────────────────── */
+.template-section-item {
+  margin: 12px 16px 0;
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.template-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 12px 12px 16px;
+  background: var(--surface-2);
+}
+.template-section-name {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+.template-section-edit-btn,
+.template-section-delete-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--text-muted);
+  transition: background 0.1s, color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.template-section-edit-btn:active { background: var(--accent-dim); color: var(--accent); }
+.template-section-delete-btn:active { background: var(--danger-dim); color: var(--danger); }
+.template-fields-area {
+  padding: 10px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.template-field-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface-3);
+  border: 1px solid var(--surface-2);
+  border-radius: 999px;
+  padding: 4px 4px 4px 12px;
+  font-size: 13px;
+  color: var(--text);
+}
+.template-field-chip-del {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--text-dim);
+  transition: background 0.1s, color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.template-field-chip-del:active { background: var(--danger-dim); color: var(--danger); }
+.btn-add-field {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border: 1.5px dashed var(--surface-2);
+  border-radius: 999px;
+  background: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-add-field:active { border-color: var(--accent); color: var(--accent); }
+.btn-add-section {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 16px 16px 0;
+  padding: 12px;
+  border: 1.5px dashed var(--surface-2);
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-add-section:active { border-color: var(--accent); color: var(--accent); }

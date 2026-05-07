@@ -12,7 +12,7 @@ export async function mount(container, { screen, params }) {
   if (isEdit) {
     const taskId = params[0];
     task = await db.get('tasks', taskId);
-    if (!task) { navigate('home'); return; }
+    if (!task) { navigate('tracker'); return; }
     gameId = task.gameId;
     defaultType = task.type;
   } else {

@@ -18,12 +18,19 @@ function parseHash() {
 
 const SCREEN_MAP = {
   home: 'home',
+  tracker: 'tracker',
   game: 'game',
   'add-game': 'add-game',
   'edit-game': 'add-game',
   'add-task': 'add-task',
   'edit-task': 'add-task',
   history: 'history',
+  'builds-home': 'builds-home',
+  'add-build-game': 'add-build-game',
+  'edit-build-game': 'add-build-game',
+  'builds-game': 'builds-game',
+  'build-template': 'build-template',
+  'build-detail': 'build-detail',
 };
 
 let currentCleanup = null;

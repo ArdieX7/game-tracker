@@ -1,4 +1,4 @@
-const CACHE = 'game-tracker-v3';
+const CACHE = 'game-tracker-v4';
 const ASSETS = [
   './index.html',
   './manifest.json',
@@ -10,10 +10,16 @@ const ASSETS = [
   './js/image.js',
   './js/notifications.js',
   './js/screens/home.js',
+  './js/screens/tracker.js',
   './js/screens/game.js',
   './js/screens/add-game.js',
   './js/screens/add-task.js',
   './js/screens/history.js',
+  './js/screens/builds-home.js',
+  './js/screens/add-build-game.js',
+  './js/screens/builds-game.js',
+  './js/screens/build-template.js',
+  './js/screens/build-detail.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
 ];
