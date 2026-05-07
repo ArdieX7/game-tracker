@@ -1,6 +1,8 @@
 import { db } from '../db.js';
 import { navigate, showToast } from '../app.js';
 
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
 export async function mount(container, { screen, params }) {
   const isEdit = screen === 'edit-task';
   let task = null;
@@ -14,13 +16,13 @@ export async function mount(container, { screen, params }) {
     gameId = task.gameId;
     defaultType = task.type;
   } else {
-    // params: [gameId, type?]
     gameId = params[0];
     defaultType = params[1] === 'weekly' ? 'weekly' : 'daily';
   }
 
   let selectedType = defaultType;
   let count = task?.maxCount ?? 1;
+  let activeDays = task?.activeDays ?? [];
 
   container.innerHTML = `
     <div class="screen">
@@ -40,6 +42,17 @@ export async function mount(container, { screen, params }) {
             <div class="type-btn${selectedType === 'daily' ? ' selected' : ''}" data-type="daily">📅 Daily</div>
             <div class="type-btn${selectedType === 'weekly' ? ' selected' : ''}" data-type="weekly">📆 Weekly</div>
           </div>
+        </div>
+
+        <div class="form-section" id="active-days-section" ${selectedType !== 'daily' ? 'style="display:none"' : ''}>
+          <div class="form-label">
+            Active Days
+            <span class="form-label-note">— leave all off = every day</span>
+          </div>
+          <div class="day-picker" id="day-picker">
+            ${DAY_NAMES.map((d, i) => `<button class="day-btn${activeDays.includes(i) ? ' selected' : ''}" data-day="${i}">${d}</button>`).join('')}
+          </div>
+          <div class="form-hint" id="days-hint">${daysHint(activeDays)}</div>
         </div>
 
         <div class="form-section">
@@ -69,18 +82,29 @@ export async function mount(container, { screen, params }) {
     if (!btn) return;
     selectedType = btn.dataset.type;
     document.querySelectorAll('.type-btn').forEach(b => b.classList.toggle('selected', b.dataset.type === selectedType));
+    document.getElementById('active-days-section').style.display = selectedType === 'daily' ? '' : 'none';
     document.getElementById('count-hint').textContent = countHint(count, selectedType);
   });
 
+  // Day picker (toggle individual days)
+  document.getElementById('day-picker').addEventListener('click', (e) => {
+    const btn = e.target.closest('.day-btn');
+    if (!btn) return;
+    const day = Number(btn.dataset.day);
+    if (activeDays.includes(day)) {
+      activeDays = activeDays.filter(d => d !== day);
+    } else {
+      activeDays = [...activeDays, day].sort((a, b) => a - b);
+    }
+    document.querySelectorAll('.day-btn').forEach(b =>
+      b.classList.toggle('selected', activeDays.includes(Number(b.dataset.day)))
+    );
+    document.getElementById('days-hint').textContent = daysHint(activeDays);
+  });
+
   // Stepper
-  document.getElementById('btn-minus').addEventListener('click', () => {
-    if (count > 1) count--;
-    updateStepper();
-  });
-  document.getElementById('btn-plus').addEventListener('click', () => {
-    if (count < 99) count++;
-    updateStepper();
-  });
+  document.getElementById('btn-minus').addEventListener('click', () => { if (count > 1) count--; updateStepper(); });
+  document.getElementById('btn-plus').addEventListener('click', () => { if (count < 99) count++; updateStepper(); });
 
   function updateStepper() {
     document.getElementById('stepper-val').textContent = count;
@@ -101,6 +125,7 @@ export async function mount(container, { screen, params }) {
       name,
       type: selectedType,
       maxCount: count,
+      activeDays: selectedType === 'daily' ? activeDays : [],
       order: task?.order ?? tasks.length,
     };
 
@@ -119,6 +144,12 @@ export async function mount(container, { screen, params }) {
       navigate(`game/${gameId}`);
     });
   }
+}
+
+function daysHint(days) {
+  if (days.length === 0) return 'Appears every day';
+  const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return `Only on: ${days.map(d => names[d]).join(', ')}`;
 }
 
 function countHint(count, type) {

@@ -54,7 +54,11 @@ export async function mount(container, { params }) {
     area.innerHTML = '';
 
     const all = await db.getByIndex('tasks', 'gameId', gameId);
-    const tasks = all.filter(t => t.type === activeTab).sort((a, b) => a.order - b.order);
+    const todayDow = new Date().getDay();
+    const allForTab = all.filter(t => t.type === activeTab).sort((a, b) => a.order - b.order);
+    const tasks = activeTab === 'daily'
+      ? allForTab.filter(t => !t.activeDays?.length || t.activeDays.includes(todayDow))
+      : allForTab;
 
     const nextReset = activeTab === 'daily'
       ? getNextDailyReset(game.dailyResetTime)
@@ -71,10 +75,17 @@ export async function mount(container, { params }) {
     if (!tasks.length) {
       const empty = document.createElement('div');
       empty.className = 'empty-state';
-      empty.innerHTML = `
-        <div class="empty-state-icon">${activeTab === 'daily' ? '📅' : '📆'}</div>
-        <h3>No ${activeTab} tasks</h3>
-        <p>Tap the + button to add your first ${activeTab} task</p>`;
+      if (allForTab.length > 0 && activeTab === 'daily') {
+        empty.innerHTML = `
+          <div class="empty-state-icon">📅</div>
+          <h3>No tasks today</h3>
+          <p>All daily tasks are scheduled for specific days only</p>`;
+      } else {
+        empty.innerHTML = `
+          <div class="empty-state-icon">${activeTab === 'daily' ? '📅' : '📆'}</div>
+          <h3>No ${activeTab} tasks</h3>
+          <p>Tap the + button to add your first ${activeTab} task</p>`;
+      }
       area.appendChild(empty);
       return;
     }
