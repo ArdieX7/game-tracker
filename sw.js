@@ -1,9 +1,10 @@
-const CACHE = 'game-tracker-v2';
+const CACHE = 'game-tracker-v3';
 const ASSETS = [
   './index.html',
   './manifest.json',
   './css/app.css',
   './js/app.js',
+  './js/version.js',
   './js/db.js',
   './js/reset.js',
   './js/image.js',

@@ -68,6 +68,10 @@ window.addEventListener('hashchange', render);
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(console.warn);
+    // When a new SW takes control, reload immediately so new code is always active
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.location.reload();
+    });
   }
 
   // Only schedule if permission already granted (request comes from UI gesture in home screen)

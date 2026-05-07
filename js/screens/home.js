@@ -1,6 +1,7 @@
 import { db } from '../db.js';
 import { navigate, showToast } from '../app.js';
 import { getDailyPeriodKey, getWeeklyPeriodKey } from '../reset.js';
+import { VERSION } from '../version.js';
 
 export async function mount(container) {
   const games = (await db.getAll('games')).sort((a, b) => a.order - b.order);
@@ -8,7 +9,7 @@ export async function mount(container) {
   container.innerHTML = `
     <div class="screen">
       <div class="app-bar">
-        <div class="app-bar-title">Game <span>Tracker</span></div>
+        <div class="app-bar-title">Game <span>Tracker</span> <span class="app-version-badge">${VERSION}</span></div>
         <button class="app-bar-btn accent" id="btn-add-game" title="Add Game">＋</button>
       </div>
       <div class="scroll-area">
